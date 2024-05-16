@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('pw.jpg');
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            
+        }
+
+        .container {
+            text-align: center;
+            background-image: url('pw2.jpg');
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 20px 20px rgb(176, 104, 142);
+        }
+
+        h1 {
+            color: #0f0e0e;
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        #timer {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #252323;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 150px); 
+            grid-template-rows: repeat(3, 150px); 
+            gap: 5px;
+            border: 3px solid #333;
+            background-color: #f0ffff;
+            border-radius: 10px;
+            padding: 2px;
+        }
+
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5em; 
+            cursor: pointer;
+            border: 1px solid #ccc;
+            transition: background-color 0.3s;
+            color: #333;
+        }
+
+        .cell:hover {
+            background-color: #eaeaea;
+        }
+        .cell.x {
+            color: #ff6347; 
+        }
+        .cell.o {
+            color: #1e90ff; 
+        }
+
+        .options {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #3929ce;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 15px 30px;
+            font-size: 24px; 
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 20px; 
+            transition: 0.2s all;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:active{
+            transform: scale(0.9);
+        }
+        #status {
+            font-size: 2.5em; 
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1 id="status">Tic Tac Toe</h1>
+        <div id="timer">Game starting in <span id="countdown">3</span> seconds</div>
+        <div id="board" class="board">
+            <div class="cell" onclick="handleClick(0)"></div>
+            <div class="cell" onclick="handleClick(1)"></div>
+            <div class="cell" onclick="handleClick(2)"></div>
+            <div class="cell" onclick="handleClick(3)"></div>
+            <div class="cell" onclick="handleClick(4)"></div>
+            <div class="cell" onclick="handleClick(5)"></div>
+            <div class="cell" onclick="handleClick(6)"></div>
+            <div class="cell" onclick="handleClick(7)"></div>
+            <div class="cell" onclick="handleClick(8)"></div>
+        </div>
+        <div id="options" class="options" style="display: none;">
+            <button onclick="restartGame()">Rematch</button>
+            <button onclick="exitGame()">Exit</button>
+        </div>
+    </div>
+    <script>
+        let currentPlayer = 'X';
+        let cells = document.querySelectorAll('.cell');
+        let gameActive = false;
+        let gameState = ['', '', '', '', '', '', '', '', ''];
+        let countdown = 3;
+        let filledCells = 0; 
+        const winningConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        function startGame() {
+            gameActive = true;
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('status').innerText = `Player ${currentPlayer}'s turn`;
+        }
+
+        function updateTimer() {
+            countdown--;
+            document.getElementById('countdown').innerText = countdown;
+            if (countdown === 0) {
+                clearInterval(timer);
+                startGame();
+            }
+        }
+
+        let timer = setInterval(updateTimer, 1000);
+
+        function checkWinner() {
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+                    return gameState[a];
+                }
+            }
+            return null;
+        }
+
+        function handleClick(cellIndex) {
+            if (!gameActive || gameState[cellIndex] !== '') return;
+
+            gameState[cellIndex] = currentPlayer;
+            cells[cellIndex].innerText = currentPlayer;
+            cells[cellIndex].classList.add(currentPlayer.toLowerCase()); 
+            
+            filledCells++; 
+            let winner = checkWinner();
+            if (winner) {
+                document.getElementById('status').innerText = `${winner} wins!`;
+                gameActive = false;
+                document.getElementById('options').style.display = 'block';
+            } else if (filledCells === 9) { 
+                document.getElementById('status').innerText = "It's a tie!";
+                gameActive = false;
+                document.getElementById('options').style.display = 'block';
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                document.getElementById('status').innerText = `Player ${currentPlayer}'s turn`;
+            }
+        }
+
+        function restartGame() {
+            location.reload();
+        }
+
+        function exitGame() {
+             window.location.href = "tictactoe.html";
+        }
+    </script>
+</body>
+</html>
